@@ -20,6 +20,10 @@ void TCB::startThread(TCB* tcb) {
     Scheduler::put(tcb);
 }
 
+void TCB::join(TCB* tcb) {
+    while(!tcb->isFinished()) TCB::dispatch();
+}
+
 void TCB::yield() {
     Riscv::w_a0(13);
     __asm__ volatile("ecall");

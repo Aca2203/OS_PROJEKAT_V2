@@ -66,6 +66,12 @@ void thread_start(TCB* tcb) {
     __asm__ volatile("ecall");
 }
 
+void thread_join(thread_t* handle) {
+    __asm__ volatile("mv a1, %0" : : "r"(handle));
+    Riscv::w_a0(0x08);
+    __asm__ volatile("ecall");
+}
+
 int sem_open(sem_t* handle, unsigned init) {
     __asm__ volatile("mv a2, %0" : : "r"(init));
     __asm__ volatile("mv a1, %0" : : "r"(handle));

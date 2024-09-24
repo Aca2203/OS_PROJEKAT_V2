@@ -53,6 +53,13 @@ void Riscv::handleSupervisorTrap() {
 
                 break;
 
+            case 0x08:
+                __asm__ volatile("mv %0, a1" : "=r" (handle));
+
+                TCB::join(*handle);
+
+                break;
+
             // void thread_start(TCB* tcb)
             case 0x09:
                 TCB* tcb;

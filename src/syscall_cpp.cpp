@@ -31,6 +31,10 @@ int Thread::start() {
     return 0;
 }
 
+void Thread::join() {
+    thread_join(&this->myHandle);
+}
+
 void Thread::dispatch() {
     thread_dispatch();
 }

@@ -48,6 +48,8 @@ int sem_trywait(sem_t id);
 
 int time_sleep(time_t);
 
+void thread_join(thread_t* handle);
+
 char getc();
 void putc(char);
 char cgetc();

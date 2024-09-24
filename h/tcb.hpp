@@ -30,6 +30,8 @@ public:
 
     static void startThread(TCB* tcb);
 
+    static void join(TCB* tcb);
+
     static void yield();
 
     static TCB* running;
