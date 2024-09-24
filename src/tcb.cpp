@@ -8,7 +8,9 @@ uint64 TCB::timeSliceCounter = 0;
 
 TCB* TCB::createThread(Body body, void* arg) {
     TCB* tcb = new TCB(body, arg);
-    if(!tcb->isMain()) Scheduler::put(tcb);
+    if(!tcb->isMain()) {
+        TCB::startThread(tcb);
+    }
     return tcb;
 }
 
@@ -18,10 +20,12 @@ TCB* TCB::createThreadWithoutStarting(Body body, void* arg) {
 
 void TCB::startThread(TCB* tcb) {
     Scheduler::put(tcb);
+    TCB::running->childrenCount++;
+    tcb->parent = TCB::running;
 }
 
 void TCB::yield() {
-    Riscv::w_a0(13);
+    Riscv::w_a0(0x13);
     __asm__ volatile("ecall");
 }
 
@@ -39,8 +43,13 @@ void TCB::dispatch() {
     TCB::contextSwitch(&old->context, &running->context);
 }
 
+void TCB::joinAll() {
+    while(TCB::running->childrenCount > 0) TCB::dispatch();
+}
+
 void TCB::threadWrapper() {
     Riscv::popSppSpie();
     running->body(running->arg);
+    running->parent->childrenCount--;
     thread_exit();
 }

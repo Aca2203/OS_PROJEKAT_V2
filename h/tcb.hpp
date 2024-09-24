@@ -61,6 +61,9 @@ private:
     bool finished;
     bool blocked;
 
+    TCB* parent = nullptr;
+    int childrenCount = 0;
+
     friend class Riscv;
     friend class MySemaphore;
 
@@ -69,6 +72,8 @@ private:
     static void contextSwitch(Context* oldContext, Context* newContext);
 
     static void dispatch();
+
+    static void joinAll();
 
     static uint64 timeSliceCounter;
 };

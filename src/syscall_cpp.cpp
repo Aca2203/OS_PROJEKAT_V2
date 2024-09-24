@@ -39,6 +39,10 @@ int Thread::sleep(time_t time) {
     return 0;
 }
 
+void Thread::joinAll() {
+    thread_joinAll();
+}
+
 Thread::Thread() {
     thread_create_without_start(&this->myHandle, runWrapper, this);
 }

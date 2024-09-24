@@ -17,6 +17,7 @@ public:
 
   static void dispatch();
   static int sleep(time_t);
+  static void joinAll();
 
 protected:
   Thread();

@@ -53,6 +53,11 @@ void Riscv::handleSupervisorTrap() {
 
                 break;
 
+            // void thread_joinAll()
+            case 0x08:
+                TCB::joinAll();
+                break;
+
             // void thread_start(TCB* tcb)
             case 0x09:
                 TCB* tcb;
