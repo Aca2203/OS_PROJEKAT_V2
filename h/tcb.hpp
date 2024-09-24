@@ -28,9 +28,13 @@ public:
 
     static TCB* createThreadWithoutStarting(Body body, void* arg);
 
+    static void ping(TCB* tcb);
+
     static void startThread(TCB* tcb);
 
     static void yield();
+
+    void addBlocks(int count) { this->numOfBlocks += count; }
 
     static TCB* running;
 
@@ -60,6 +64,9 @@ private:
     bool main;
     bool finished;
     bool blocked;
+
+    bool isPinged = false;
+    int numOfBlocks = 0;
 
     friend class Riscv;
     friend class MySemaphore;

@@ -14,6 +14,7 @@ public:
   virtual ~Thread();
 
   int start();
+  void pingCPP();
 
   static void dispatch();
   static int sleep(time_t);

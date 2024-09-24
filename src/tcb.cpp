@@ -2,6 +2,7 @@
 #include "../h/riscv.hpp"
 #include "../h/scheduler.hpp"
 #include "../h/syscall_c.hpp"
+#include "../h/printing.hpp"
 
 TCB* TCB::running = nullptr;
 uint64 TCB::timeSliceCounter = 0;
@@ -16,6 +17,11 @@ TCB* TCB::createThreadWithoutStarting(Body body, void* arg) {
     return new TCB(body, arg);
 }
 
+void TCB::ping(TCB* tcb) {
+    if(!tcb) return;
+    tcb->isPinged = true;
+}
+
 void TCB::startThread(TCB* tcb) {
     Scheduler::put(tcb);
 }
@@ -27,6 +33,12 @@ void TCB::yield() {
 
 void TCB::dispatch() {
     TCB* old = running;
+    if(running->isPinged) {
+        printString("Nit je alocirala ");
+        printInt(running->numOfBlocks);
+        printString(" blokova.\n");
+        running->isPinged = false;
+    }
     if(!old->isFinished() && !old->isBlocked()){ Scheduler::put(old); }
     running = Scheduler::get();
 

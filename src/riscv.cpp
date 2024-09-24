@@ -23,6 +23,7 @@ void Riscv::handleSupervisorTrap() {
         int ret;
         char chr;
         thread_t* handle;
+        thread_t tcb;
         Body body;
         void* arg;
         sem_t sem;
@@ -53,6 +54,12 @@ void Riscv::handleSupervisorTrap() {
 
                 break;
 
+            case 0x08:
+                __asm__ volatile("mv %0, a1" : "=r" (tcb));
+
+                TCB::ping(tcb);
+
+                break;
             // void thread_start(TCB* tcb)
             case 0x09:
                 TCB* tcb;

@@ -2,11 +2,25 @@
 #include "../h/syscall_c.hpp"
 
 void *operator new (size_t size){
-    return MemoryAllocator::mem_alloc(size);
+    void* ptr = MemoryAllocator::mem_alloc(size);
+
+    if(ptr != nullptr && TCB::running) {
+        int blockNum = (size + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE;
+        TCB::running->addBlocks(blockNum);
+    }
+
+    return ptr;
 }
 
 void *operator new[] (size_t size){
-    return MemoryAllocator::mem_alloc(size);
+    void* ptr = MemoryAllocator::mem_alloc(size);
+
+    if(ptr != nullptr && TCB::running) {
+        int blockNum = (size + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE;
+        TCB::running->addBlocks(blockNum);
+    }
+
+    return ptr;
 }
 
 void operator delete (void *ptr) noexcept {
@@ -41,6 +55,10 @@ int Thread::sleep(time_t time) {
 
 Thread::Thread() {
     thread_create_without_start(&this->myHandle, runWrapper, this);
+}
+
+void Thread::pingCPP(){
+    ping(this->myHandle);
 }
 
 Semaphore::Semaphore(unsigned init) {
