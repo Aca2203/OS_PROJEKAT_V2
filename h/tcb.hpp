@@ -18,6 +18,8 @@ public:
 
     void setBlocked(bool blocked) { this->blocked = blocked; }
 
+    int getId() const { return id; }
+
     bool isMain() const { return this->main; }
 
     uint64 getTimeSlice() const { return time_slice; }
@@ -60,6 +62,8 @@ private:
     bool main;
     bool finished;
     bool blocked;
+    static int lastId;
+    int id = lastId++;
 
     friend class Riscv;
     friend class MySemaphore;

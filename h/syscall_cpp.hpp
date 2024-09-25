@@ -14,6 +14,7 @@ public:
   virtual ~Thread();
 
   int start();
+  int getId() const { return this->myHandle->getId(); }
 
   static void dispatch();
   static int sleep(time_t);

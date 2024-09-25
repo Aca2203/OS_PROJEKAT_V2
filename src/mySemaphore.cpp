@@ -1,5 +1,6 @@
 #include "../h/mySemaphore.hpp"
 #include "../h/syscall_c.hpp"
+#include "../h/printing.hpp"
 
 int MySemaphore::wait() {
     if(this->closed) return -1;
@@ -51,7 +52,17 @@ void MySemaphore::block() {
 
 void MySemaphore::unblock() {
     if(this->blocked.peekFirst() == nullptr) return;
-    TCB* tcb = this->blocked.removeFirst();
-    tcb->setBlocked(false);
-    Scheduler::put(tcb);
+    TCB* tcb = nullptr;
+    int lowestId = TCB::lastId;
+    for(blocked.start(); !blocked.end(); blocked.next()) {
+        if(blocked.getCurrent()->getId() < lowestId) {
+            lowestId = blocked.getCurrent()->getId();
+            tcb = blocked.getCurrent();
+        }
+    }
+    blocked.remove(tcb);
+    if(tcb) {
+        tcb->setBlocked(false);
+        Scheduler::put(tcb);
+    }
 }

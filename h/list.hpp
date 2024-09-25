@@ -10,6 +10,34 @@ public:
     List(const List<T> &) = delete;
     List<T> &operator=(const List<T> &) = delete;
 
+    void start() {
+        current = head;
+    }
+
+    void next() {
+        current = current->next;
+    }
+
+    bool end() const {
+        return !current;
+    }
+
+    T* getCurrent() const {
+        return current->item;
+    }
+
+    void remove(T* item) {
+        if(!item) return;
+        Element* curr, *prev;
+        for(curr = head, prev = nullptr; curr && curr->item != item; prev = curr, curr = curr->next);
+        if(!curr) return;
+        if(prev) prev->next = curr->next;
+        else head = curr->next;
+        if(curr == tail) tail = prev;
+        curr->next = nullptr;
+        delete curr;
+    }
+
     void addFirst(T* item) {
         Element* element = new Element(item, head);
         head = element;
@@ -86,6 +114,7 @@ private:
     };
 
     Element* head, *tail;
+    Element* current;
 };
 
 #endif

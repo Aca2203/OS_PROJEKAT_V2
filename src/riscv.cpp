@@ -212,7 +212,7 @@ void Riscv::handleSupervisorTrap() {
         // Dogodio se prekid, razlog: prekid od supervizora (tajmer)
         mc_sip(Riscv::SIP_SSIP);
         TCB::timeSliceCounter++;
-        if(TCB::timeSliceCounter >= TCB::running->getTimeSlice()) {
+        if(TCB::running && TCB::timeSliceCounter >= TCB::running->getTimeSlice()) {
             uint64 volatile sepc = r_sepc();
             uint64 volatile sstatus = r_sstatus();
             TCB::timeSliceCounter = 0;
