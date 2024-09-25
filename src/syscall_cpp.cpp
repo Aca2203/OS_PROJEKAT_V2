@@ -74,3 +74,11 @@ void Console::putc(char ch) {
 char Console::getc() {
     return cgetc();
 }
+
+void Thread::sendCPP(char* message) {
+    send(this->myHandle, message);
+}
+
+char* Thread::receiveCPP() {
+    return receive();
+}

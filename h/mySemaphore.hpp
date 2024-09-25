@@ -2,7 +2,9 @@
 #define MYSEMAPHORE_H
 
 #include "list.hpp"
-#include "tcb.hpp"
+//#include "tcb.hpp"
+
+class TCB;
 
 class MySemaphore {
 public:

@@ -17,6 +17,8 @@ public:
 
   static void dispatch();
   static int sleep(time_t);
+  void sendCPP(char* message);
+  static char* receiveCPP();
 
 protected:
   Thread();

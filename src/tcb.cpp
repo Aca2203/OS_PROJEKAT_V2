@@ -44,3 +44,16 @@ void TCB::threadWrapper() {
     running->body(running->arg);
     thread_exit();
 }
+
+void TCB::send(char* message) {
+    char* volatile msg = message;
+    this->bufferEmpty->wait();
+    this->buffer = msg;
+    this->bufferFull->signal();
+}
+
+char* TCB::receive() {
+    this->bufferFull->wait();
+    this->bufferEmpty->signal();
+    return buffer;
+}

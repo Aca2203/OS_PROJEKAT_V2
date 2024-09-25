@@ -6,6 +6,8 @@
 #define LEVEL_3_IMPLEMENTED 1
 #define LEVEL_4_IMPLEMENTED 0
 
+#include "../test/modifikacija.hpp"
+
 #if LEVEL_2_IMPLEMENTED == 1
 // TEST 1 (zadatak 2, niti C API i sinhrona promena konteksta)
 #include "../test/Threads_C_API_test.hpp"
@@ -32,7 +34,7 @@
 #endif
 
 void userMain() {
-    printString("Unesite broj testa? [1-7]\n");
+    printString("Unesite broj testa? [1-8]\n");
     int test = getc() - '0';
     getc(); // Enter posle broja
 
@@ -100,6 +102,11 @@ void userMain() {
             printString("Test se nije uspesno zavrsio\n");
             printString("TEST 7 (zadatak 2., testiranje da li se korisnicki kod izvrsava u korisnickom rezimu)\n");
 #endif
+            break;
+
+        case 8:
+            modifikacija();
+            printString("TEST 8 (modifikacija)\n");
             break;
         default:
             printString("Niste uneli odgovarajuci broj za test\n");

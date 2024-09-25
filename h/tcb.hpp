@@ -8,7 +8,7 @@
 
 class TCB {
 public:
-    ~TCB(){ delete[] stack; }
+    ~TCB(){ delete[] stack; bufferEmpty->close(); bufferFull->close(); delete bufferEmpty; delete bufferFull; }
 
     bool isFinished() const { return finished; }
 
@@ -33,6 +33,10 @@ public:
     static void yield();
 
     static TCB* running;
+
+    void send(char* message);
+
+    char* receive();
 
 private:
     explicit TCB(Body body, void* arg) :
@@ -60,6 +64,9 @@ private:
     bool main;
     bool finished;
     bool blocked;
+    char* buffer;
+    MySemaphore* bufferEmpty = new MySemaphore(1);
+    MySemaphore* bufferFull = new MySemaphore(0);
 
     friend class Riscv;
     friend class MySemaphore;

@@ -32,6 +32,9 @@ void thread_dispatch();
 int thread_create_without_start(thread_t* handle, void (*start_routine)(void*), void* arg);
 void thread_start(TCB* tcb);
 
+void send(thread_t handle, char* message);
+char* receive();
+
 // Semafori
 int sem_open(
     sem_t* handle,
