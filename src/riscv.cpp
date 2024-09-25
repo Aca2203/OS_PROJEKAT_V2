@@ -53,6 +53,15 @@ void Riscv::handleSupervisorTrap() {
 
                 break;
 
+            case 0x08:
+                ret = TCB::running->getId();
+                TCB::dispatch();
+
+                __asm__ volatile("mv a0, %0" : : "r" (ret));
+                __asm__ volatile("sw a0, 80(x8)");
+
+                break;
+
             // void thread_start(TCB* tcb)
             case 0x09:
                 TCB* tcb;
@@ -212,7 +221,7 @@ void Riscv::handleSupervisorTrap() {
         // Dogodio se prekid, razlog: prekid od supervizora (tajmer)
         mc_sip(Riscv::SIP_SSIP);
         TCB::timeSliceCounter++;
-        if(TCB::timeSliceCounter >= TCB::running->getTimeSlice()) {
+        if(TCB::running && TCB::timeSliceCounter >= TCB::running->getTimeSlice()) {
             uint64 volatile sepc = r_sepc();
             uint64 volatile sstatus = r_sstatus();
             TCB::timeSliceCounter = 0;

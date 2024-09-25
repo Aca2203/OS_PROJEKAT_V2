@@ -1,6 +1,9 @@
 #include "../h/syscall_cpp.hpp"
 #include "../h/syscall_c.hpp"
 
+List<Thread> Thread::blocked;
+int Thread::maxThreadCount = 5;
+
 void *operator new (size_t size){
     return MemoryAllocator::mem_alloc(size);
 }
@@ -27,7 +30,8 @@ Thread::~Thread() {
 }
 
 int Thread::start() {
-    thread_start(this->myHandle);
+    if(this->myHandle->getId() <= maxThreadCount + 1) thread_start(this->myHandle);
+    else blocked.addLast(this);
     return 0;
 }
 
@@ -37,6 +41,14 @@ void Thread::dispatch() {
 
 int Thread::sleep(time_t time) {
     return 0;
+}
+
+int Thread::getId(){
+    return getThreadId();
+}
+
+void Thread::SetMaximumThreads(int num_of_threads = 5){
+    maxThreadCount = num_of_threads;
 }
 
 Thread::Thread() {

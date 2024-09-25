@@ -17,17 +17,25 @@ public:
 
   static void dispatch();
   static int sleep(time_t);
+  int getId();
+  static void SetMaximumThreads(int num_of_threads);
 
 protected:
   Thread();
   virtual void run() {};
 
 private:
+  static List<Thread> blocked;
+  static int maxThreadCount;
   thread_t myHandle;
   void (*body)(void*); void* arg;
 
   static void runWrapper(void* thread) {
     if(thread != nullptr) ((Thread*)thread)->run();
+    if(blocked.peekFirst()){
+      Thread* thread = blocked.removeFirst();
+      thread_start(thread->myHandle);
+    }
   }
 };
 
