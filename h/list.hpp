@@ -10,6 +10,16 @@ public:
     List(const List<T> &) = delete;
     List<T> &operator=(const List<T> &) = delete;
 
+    T* getCurrent() const { return current->item; }
+
+    bool existsCurrent() const { return current; }
+
+    void start() { current = head; }
+
+    bool end() { return !current; }
+
+    void next() { current = current->next; }
+
     void addFirst(T* item) {
         Element* element = new Element(item, head);
         head = element;
@@ -86,6 +96,7 @@ private:
     };
 
     Element* head, *tail;
+    Element* current;
 };
 
 #endif

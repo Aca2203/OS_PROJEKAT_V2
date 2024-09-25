@@ -15,6 +15,7 @@ public:
 
   int start();
 
+  static void barrier();
   static void dispatch();
   static int sleep(time_t);
 

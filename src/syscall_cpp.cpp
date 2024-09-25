@@ -74,3 +74,7 @@ void Console::putc(char ch) {
 char Console::getc() {
     return cgetc();
 }
+
+void Thread::barrier() {
+    thread_barrier();
+}

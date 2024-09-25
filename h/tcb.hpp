@@ -33,6 +33,7 @@ public:
     static void yield();
 
     static TCB* running;
+    static List<TCB> barrierThreads;
 
 private:
     explicit TCB(Body body, void* arg) :
@@ -60,6 +61,7 @@ private:
     bool main;
     bool finished;
     bool blocked;
+    bool calledBarrier = false;
 
     friend class Riscv;
     friend class MySemaphore;
@@ -69,6 +71,9 @@ private:
     static void contextSwitch(Context* oldContext, Context* newContext);
 
     static void dispatch();
+
+    static void barrier();
+    static void checkBarrier();
 
     static uint64 timeSliceCounter;
 };

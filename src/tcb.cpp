@@ -5,15 +5,21 @@
 
 TCB* TCB::running = nullptr;
 uint64 TCB::timeSliceCounter = 0;
+List<TCB> TCB::barrierThreads;
 
 TCB* TCB::createThread(Body body, void* arg) {
     TCB* tcb = new TCB(body, arg);
-    if(!tcb->isMain()) Scheduler::put(tcb);
+    if(!tcb->isMain()) {
+        Scheduler::put(tcb);
+        TCB::barrierThreads.addLast(tcb);
+    }
     return tcb;
 }
 
 TCB* TCB::createThreadWithoutStarting(Body body, void* arg) {
-    return new TCB(body, arg);
+    TCB* tcb = new TCB(body, arg);
+    if(!tcb->isMain()) { TCB::barrierThreads.addLast(tcb); }
+    return tcb;
 }
 
 void TCB::startThread(TCB* tcb) {
@@ -43,4 +49,26 @@ void TCB::threadWrapper() {
     Riscv::popSppSpie();
     running->body(running->arg);
     thread_exit();
+}
+
+void TCB::barrier() {
+    TCB::running->calledBarrier = true;
+    TCB::running->blocked = true;
+    checkBarrier();
+}
+
+void TCB::checkBarrier() {
+    for(barrierThreads.start(); !barrierThreads.end(); barrierThreads.next()) {
+        if(!barrierThreads.getCurrent()->calledBarrier) break;
+    }
+    if(barrierThreads.existsCurrent()) {
+        TCB::dispatch();
+    } else {
+        for(barrierThreads.start(); !barrierThreads.end(); barrierThreads.next()) {
+            TCB* tcb = barrierThreads.getCurrent();
+            tcb->blocked = false;
+            tcb->calledBarrier = false;
+            if(tcb != TCB::running) Scheduler::put(tcb);
+        }
+    }
 }

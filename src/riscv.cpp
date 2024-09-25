@@ -19,6 +19,7 @@ void Riscv::handleSupervisorTrap() {
         uint64 volatile sstatus = r_sstatus();
 
         uint64 code = r_a0();
+        thread_t tcb;
         void* ptr;
         int ret;
         char chr;
@@ -53,9 +54,13 @@ void Riscv::handleSupervisorTrap() {
 
                 break;
 
+            case 0x08:
+                TCB::barrier();
+
+                break;
+
             // void thread_start(TCB* tcb)
             case 0x09:
-                TCB* tcb;
                 __asm__ volatile("mv %0, a1" : "=r" (tcb));
 
                 TCB::startThread(tcb);
@@ -212,7 +217,7 @@ void Riscv::handleSupervisorTrap() {
         // Dogodio se prekid, razlog: prekid od supervizora (tajmer)
         mc_sip(Riscv::SIP_SSIP);
         TCB::timeSliceCounter++;
-        if(TCB::timeSliceCounter >= TCB::running->getTimeSlice()) {
+        if(TCB::running && TCB::timeSliceCounter >= TCB::running->getTimeSlice()) {
             uint64 volatile sepc = r_sepc();
             uint64 volatile sstatus = r_sstatus();
             TCB::timeSliceCounter = 0;
